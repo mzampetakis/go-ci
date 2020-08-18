@@ -22,7 +22,11 @@ jobs:
             go test -timeout 10s -p 4 -count=1 ./... -v -covermode=count -coverprofile=coverage.out
             go tool cover -html=coverage.out -o coverage.html
             mv coverage.html /tmp/test-results
-    
+
+      - run:
+          name: Run linters
+          command: golint -set_exit_status ./...
+          
       - store_artifacts:
           path: /tmp/test-results
           destination: raw-test-output

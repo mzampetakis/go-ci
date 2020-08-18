@@ -2,40 +2,40 @@
 #
 # Check https://circleci.com/docs/2.0/language-go/ for more details
 version: 2.1
-jobs: 
-  build: 
-    docker: 
-      - image: "circleci/golang:1.14"
-    environment: 
-      TEST_RESULTS: /tmp/test-results
-    
-    steps: 
-      - checkout
-      - run: "mkdir -p $TEST_RESULTS"
-      
-      - run:
-        command: "go get -v -t -d ./..."
-        name: "Get dependencies"
-        
-      - run: 
-          command: |
-              go test -timeout 10s -p 4 -count=1 ./... -v -covermode=count -coverprofile=coverage.out
-              go tool cover -html=coverage.out -o coverage.html
-              mv coverage.html /tmp/test-results
-          name: "Run unit tests"
-      - run: 
-          command: |
-              $(GOBIN)/golint -set_exit_status ./...
-              $(GOBIN)/golangci-lint run
-          name: "Run linters"
-      - store_artifacts: 
-          destination: raw-test-output
-          path: /tmp/test-results
-      - store_test_results: 
-          path: /tmp/test-results
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.13
 
-workflows: 
-  build-workflow: 
-    jobs: 
-      - build
+    environment:
+      TEST_RESULTS: /tmp/test-results
+
+    steps:
+      - checkout
+      - run: mkdir -p $TEST_RESULTS
+
+      - run:
+          name: Run unit tests
+          command: |
+            go test -timeout 10s -p 4 -count=1 ./... -v -covermode=count -coverprofile=coverage.out
+            go tool cover -html=coverage.out -o coverage.html
+            mv coverage.html /tmp/test-results
+
+      - run:
+          name: Run linters
+          command: |
+            $(GOBIN)/golint -set_exit_status ./...
+            $(GOBIN)/golangci-lint run
+    
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: raw-test-output
+
+      - store_test_results:
+          path: /tmp/test-results
+          
+workflows:
   version: 2
+  build-workflow:
+    jobs:
+      - build

@@ -10,7 +10,7 @@ jobs:
     environment:
       TEST_RESULTS: /tmp/test-results
 
-    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+    working_directory: /go/src/github.com/mzampetakis/go-ci
 
     steps:
       - checkout

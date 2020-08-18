@@ -25,7 +25,9 @@ jobs:
 
       - run:
           name: Run linters
-          command: golint -set_exit_status ./...
+          command: |
+            go get golang.org/x/lint/golint
+            golint -set_exit_status ./...
           
       - store_artifacts:
           path: /tmp/test-results
